@@ -1,0 +1,62 @@
+<Window x:Class="Finance.Desktop.MainWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Title="Spese" Icon="/Finance.Desktop;component/Assets/Finance.ico" Width="1120" Height="760" MinWidth="900" MinHeight="560"
+ Background="#F7F8FA" FontFamily="Segoe UI" FontSize="14" Loaded="WindowLoaded">
+ <Window.Resources>
+  <Style TargetType="Button"><Setter Property="Padding" Value="14,7"/><Setter Property="Margin" Value="4,0"/><Setter Property="Background" Value="White"/><Setter Property="BorderBrush" Value="#D5D9E0"/><Setter Property="Cursor" Value="Hand"/></Style>
+  <Style TargetType="TextBox"><Setter Property="Padding" Value="8,6"/><Setter Property="BorderBrush" Value="#D5D9E0"/></Style>
+  <Style TargetType="DataGrid"><Setter Property="AutoGenerateColumns" Value="False"/><Setter Property="CanUserAddRows" Value="False"/><Setter Property="CanUserDeleteRows" Value="False"/><Setter Property="IsReadOnly" Value="True"/><Setter Property="GridLinesVisibility" Value="Horizontal"/><Setter Property="HorizontalGridLinesBrush" Value="#EFF1F4"/><Setter Property="HeadersVisibility" Value="Column"/><Setter Property="RowHeight" Value="38"/><Setter Property="BorderThickness" Value="0"/><Setter Property="Background" Value="White"/><Setter Property="SelectionMode" Value="Single"/></Style>
+ </Window.Resources>
+ <Grid Margin="24">
+  <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+  <DockPanel Margin="0,0,0,18">
+   <TextBlock Text="Spese" FontSize="26" FontWeight="SemiBold" VerticalAlignment="Center"/>
+   <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+    <Button Content="Aggiungi spesa" Click="AddClick"/><Button Content="Aggiorna" Click="RefreshClick"/><Button Content="Importa Excel" Click="ImportClick"/>
+   </StackPanel>
+  </DockPanel>
+  <TabControl Grid.Row="1" Background="Transparent" BorderThickness="0" SelectionChanged="TabsChanged">
+   <TabItem Header="Spese">
+    <Grid Margin="0,14,0,0">
+     <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+     <Grid Margin="0,0,0,14">
+      <Grid.ColumnDefinitions><ColumnDefinition Width="145"/><ColumnDefinition Width="145"/><ColumnDefinition Width="*"/><ColumnDefinition Width="110"/><ColumnDefinition Width="110"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+      <StackPanel Margin="0,0,10,0"><TextBlock Text="Dal"/><TextBox x:Name="FromBox" ToolTip="gg/mm/aaaa" KeyDown="FilterKey"/></StackPanel>
+      <StackPanel Grid.Column="1" Margin="0,0,10,0"><TextBlock Text="Al"/><TextBox x:Name="ToBox" ToolTip="gg/mm/aaaa" KeyDown="FilterKey"/></StackPanel>
+      <StackPanel Grid.Column="2" Margin="0,0,10,0"><TextBlock Text="Descrizione"/><TextBox x:Name="DescriptionBox" KeyDown="FilterKey"/></StackPanel>
+      <StackPanel Grid.Column="3" Margin="0,0,10,0"><TextBlock Text="Min €"/><TextBox x:Name="MinBox" KeyDown="FilterKey"/></StackPanel>
+      <StackPanel Grid.Column="4" Margin="0,0,10,0"><TextBlock Text="Max €"/><TextBox x:Name="MaxBox" KeyDown="FilterKey"/></StackPanel>
+      <Button Grid.Column="5" Content="Filtra" VerticalAlignment="Bottom" Click="FilterClick"/>
+     </Grid>
+     <DataGrid x:Name="ExpenseGrid" Grid.Row="1" MouseDoubleClick="EditClick">
+      <DataGrid.Columns><DataGridTextColumn Header="Data" Binding="{Binding DateText}" SortMemberPath="Expense.Date" Width="125"/><DataGridTextColumn Header="Descrizione" Binding="{Binding Description}" Width="*"/><DataGridTextColumn Header="Importo €" Binding="{Binding AmountText}" SortMemberPath="Expense.AmountCents" Width="140"/></DataGrid.Columns>
+     </DataGrid>
+     <DockPanel Grid.Row="2" Margin="0,14,0,0"><TextBlock x:Name="Totals" VerticalAlignment="Center"/><StackPanel Orientation="Horizontal" HorizontalAlignment="Right"><Button Content="Modifica" Click="EditClick"/><Button Content="Elimina" Click="DeleteClick"/></StackPanel></DockPanel>
+    </Grid>
+   </TabItem>
+   <TabItem Header="Report">
+    <Grid Margin="0,14,0,0"><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+     <DockPanel Margin="0,0,0,14"><TextBlock x:Name="ReportRange" VerticalAlignment="Center" FontWeight="SemiBold"/><StackPanel Orientation="Horizontal" HorizontalAlignment="Right"><Button Content="←" Click="PreviousClick"/><Button Content="→" Click="NextClick"/></StackPanel></DockPanel>
+     <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto"><StackPanel x:Name="ReportPanel"/></ScrollViewer>
+    </Grid>
+   </TabItem>
+   <TabItem x:Name="AlertTab" Header="Alert">
+    <Grid Margin="0,14,0,0"><Grid.RowDefinitions><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+     <DataGrid x:Name="AlertGrid"><DataGrid.Columns><DataGridTextColumn Header="Data" Binding="{Binding DateText}" SortMemberPath="Alert.Date" Width="125"/><DataGridTextColumn Header="Descrizione" Binding="{Binding Description}" Width="*"/><DataGridTextColumn Header="Importo €" Binding="{Binding AmountText}" SortMemberPath="Alert.AmountCents" Width="140"/></DataGrid.Columns></DataGrid>
+     <Button Grid.Row="1" Content="Gestito" HorizontalAlignment="Right" Margin="0,14,0,0" Click="HandleClick"/>
+    </Grid>
+   </TabItem>
+   <TabItem Header="Regole">
+    <Grid Margin="0,14,0,0"><Grid.RowDefinitions><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+     <ScrollViewer VerticalScrollBarVisibility="Auto"><ItemsControl x:Name="RuleList"><ItemsControl.ItemTemplate><DataTemplate>
+      <Border Background="White" CornerRadius="5" Padding="16" Margin="0,0,0,12"><StackPanel>
+       <DockPanel><TextBlock Text="{Binding UpdatedText}" Foreground="#596270" HorizontalAlignment="Right" DockPanel.Dock="Right"/><TextBlock Text="{Binding Name}" FontSize="18" FontWeight="SemiBold"/></DockPanel>
+       <TextBlock Text="{Binding Description}" TextWrapping="Wrap" Margin="0,10,0,0"/>
+      </StackPanel></Border>
+     </DataTemplate></ItemsControl.ItemTemplate></ItemsControl></ScrollViewer>
+     <Button Grid.Row="1" Content="Aggiorna storico" Click="ApplyRulesClick" HorizontalAlignment="Right" Margin="0,14,0,0"/>
+    </Grid>
+   </TabItem>
+  </TabControl>
+  <TextBlock x:Name="Status" Grid.Row="2" Margin="0,14,0,0" TextWrapping="Wrap" Foreground="#8A2424"/>
+ </Grid>
+</Window>

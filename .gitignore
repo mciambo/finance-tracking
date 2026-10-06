@@ -1,0 +1,15 @@
+**/bin/
+**/obj/
+dist/
+*.xlsx
+*.xls
+*.csv
+*.db
+*.db-*
+*.sqlite*
+backups/
+.vs/
+.cache/
+AGENTS.md
+.agents/
+tests/

@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Finance.Cli/Finance.Cli.csproj" />
+    <Project Path="src/Finance.Core/Finance.Core.csproj" />
+    <Project Path="src/Finance.Desktop/Finance.Desktop.csproj" />
+    <Project Path="src/Finance.Infrastructure/Finance.Infrastructure.csproj" />
+    <Project Path="src/Finance.Rules/Finance.Rules.csproj" />
+  </Folder>
+</Solution>
